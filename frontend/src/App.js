@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-=======
->>>>>>> 0ab6e925945f97e3ef78ce94f3223490ca362504
 
 import AuthContext from './context/authContext';
 
