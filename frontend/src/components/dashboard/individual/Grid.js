@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import GridLayout from 'react-grid-layout';
+import LineChart from './LineChart';
 
 import {
   getGrid as getGridFromLocalStorage,
@@ -67,6 +68,7 @@ export default class Grid extends Component {
                 }}
               >
                 {item.i}
+                <LineChart />
               </div>
             </div>
           );
