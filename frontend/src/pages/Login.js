@@ -11,9 +11,7 @@ export default class Login extends Component {
     this.emailEl = React.createRef();
     this.passwordEl = React.createRef();
     this.twoFAEl = React.createRef();
-
   }
-
 
   submitHandler = (event) => {
     event.preventDefault();
@@ -25,15 +23,35 @@ export default class Login extends Component {
       return;
     }
 
-    console.log(email, password, twoFA);
-    this.context.login(email, password, twoFA);
+    const encodedAuth = btoa(`${email}:${twoFA}:${password}`);
+
+    fetch('https://api.ayayot.com:443/access-tokens?fields=secretId', {
+      method: 'POST',
+      headers: {
+        'Api-Version': '2',
+        'Api-Application': 'UUdjNNsZ3Sn1',
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${encodedAuth}`,
+      },
+      body: JSON.stringify({ expiresIn: 3600 }),
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Failed!');
+        }
+        return res.json();
+      })
+      .then((resData) => {
+        console.log(resData);
+        console.log(resData.data.secretId);
+        if (resData.status === 'success') {
+          this.context.login(resData.data.secretId);
+        } else {
+          console.log('Unauthorized');
+        }
+      })
+      .catch((err) => console.log(err));
   };
-
-  hideField() {
-    console.log(this.twoFACheckEl.current)
-    // console.log(twoFACheck);
-  }
-
 
   render() {
     return (
@@ -49,7 +67,7 @@ export default class Login extends Component {
             <input type='password' id='password' ref={this.passwordEl} />
           </div>
           <div className='form-control'>
-            <label htmlFor='twoFA'>Two Factor Authentication value</label>
+            <label htmlFor='twoFA'>Two-Factor Token (if enabled)</label>
             <input type='text' id='twoFA' ref={this.twoFAEl} />
           </div>
           <div className='form-actions'>

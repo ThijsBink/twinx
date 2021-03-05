@@ -10,47 +10,15 @@ import UsersPage from './pages/Users';
 
 export default class App extends Component {
   state = {
-    loggedIn: true,
+    token: null,
   };
 
-  login = (email, pass, twoFA) => {
-    console.log(email, pass, twoFA)
-    const encodeString = btoa(`${email}:${twoFA}:${pass}`);
-    var myHeaders = new Headers();
-    myHeaders.append("Api-Version", "2");
-    myHeaders.append("Api-Application", "UUdjNNsZ3Sn1");
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", `Basic ${encodeString}`);
-  
-    var raw = JSON.stringify({
-      "expiresIn": 5184000
-    });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch("https://api.ayayot.com:443/access-tokens?fields=secretId", requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result.status === 'success') {
-          this.setLogin();
-        } else {
-          console.log("Unauthorized")
-        }
-      })
-      .catch(error => console.log('error', error));
+  login = (token) => {
+    this.setState({ token: token });
   };
-
-  setLogin = () => {
-    this.setState({ loggedIn: true });
-  }
 
   logout = () => {
-    this.setState({ loggedIn: false });
+    this.setState({ token: null });
   };
 
   render() {
@@ -58,22 +26,26 @@ export default class App extends Component {
       <BrowserRouter>
         <main className='main-content'>
           <AuthContext.Provider
-            value={{ loggedIn: false, login: this.login, logout: this.logout }}
+            value={{
+              token: this.state.token,
+              login: this.login,
+              logout: this.logout,
+            }}
           >
-            {this.state.loggedIn && <Navbar />}
+            {this.state.token && <Navbar />}
             <Switch>
-              {!this.state.loggedIn && (
+              {!this.state.token && (
                 <Route path='/' component={LoginPage} exact />
               )}
-              {this.state.loggedIn && (
+              {this.state.token && (
                 <Route path='/dashboard' component={DashboardPage} exact />
               )}
-              {this.state.loggedIn && (
+              {this.state.token && (
                 <Route path='/users' component={UsersPage} exact />
               )}
 
-              {!this.state.loggedIn && <Redirect to='/' exact />}
-              {this.state.loggedIn && <Redirect to='/dashboard' exact />}
+              {!this.state.token && <Redirect to='/' exact />}
+              {this.state.token && <Redirect to='/dashboard' exact />}
             </Switch>
           </AuthContext.Provider>
         </main>
