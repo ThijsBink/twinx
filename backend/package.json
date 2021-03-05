@@ -26,6 +26,7 @@
     "knex": "^0.21.18",
     "mandatoryenv": "^1.1.1",
     "module-alias": "^2.2.2",
+    "mongodb": "^3.6.4",
     "morgan": "^1.9.1",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.7",

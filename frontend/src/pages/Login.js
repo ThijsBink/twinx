@@ -10,20 +10,30 @@ export default class Login extends Component {
 
     this.emailEl = React.createRef();
     this.passwordEl = React.createRef();
+    this.twoFAEl = React.createRef();
+
   }
+
 
   submitHandler = (event) => {
     event.preventDefault();
     const email = this.emailEl.current.value;
     const password = this.passwordEl.current.value;
+    const twoFA = this.twoFAEl.current.value;
 
     if (email.trim().length === 0 || password.trim().length === 0) {
       return;
     }
 
-    console.log(email, password);
-    this.context.login();
+    console.log(email, password, twoFA);
+    this.context.login(email, password, twoFA);
   };
+
+  hideField() {
+    console.log(this.twoFACheckEl.current)
+    // console.log(twoFACheck);
+  }
+
 
   render() {
     return (
@@ -37,6 +47,10 @@ export default class Login extends Component {
           <div className='form-control'>
             <label htmlFor='password'>Password</label>
             <input type='password' id='password' ref={this.passwordEl} />
+          </div>
+          <div className='form-control'>
+            <label htmlFor='twoFA'>Two Factor Authentication value</label>
+            <input type='text' id='twoFA' ref={this.twoFAEl} />
           </div>
           <div className='form-actions'>
             <button type='submit'>Login</button>

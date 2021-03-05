@@ -3,28 +3,14 @@ const path = require('path');
 const {inject, errorHandler} = require('express-custom-error');
 const express = require("express");
 const app = express();
-
+const db = require(path.resolve(__dirname, 'database/mongo'))
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 
-// const { Pool, Client } = require('pg')
-// const connectionString = 'postgres://thijs:thijs@localhost:5432/mydatabase'
-// const client = new Client({
-//     connectionString
-//   })
-
-
-//   client.query('SELECT NOW()', (err, res) => {
-//       console.log('cool')
-//     console.log(err, res)
-//     client.end()
-//   })
-
 
 //define db specific routes
 app.use('/users', require(path.resolve(__dirname, 'routes/users')));
-
 
 
 app.listen(5000, () => console.log(`running on ${5000}`))
