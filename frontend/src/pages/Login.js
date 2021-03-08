@@ -26,7 +26,9 @@ export default class Login extends Component {
     }
 
     const encodedAuth = btoa(`${email}:${twoFA}:${password}`);
-    getAccessToken(encodedAuth).then((token) => this.context.login(token));
+    getAccessToken('UUdjNNsZ3Sn1', encodedAuth).then((token) =>
+      this.context.login(token)
+    );
   };
 
   render() {
