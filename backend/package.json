@@ -1,41 +1,37 @@
 {
   "name": "backend",
-  "version": "1.0.0",
-  "description": "backend is the ultimate backend solution",
-  "main": "src/server.js",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A Strapi application",
   "scripts": {
-    "setup": "npm install && npm update",
-    "start": "nodemon src/server.js"
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi"
   },
-  "keywords": [
-    "express",
-    "backend",
-    "backend"
-  ],
-  "license": "MIT",
+  "devDependencies": {},
   "dependencies": {
-    "bluebird": "^3.7.2",
-    "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.4",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "express-custom-error": "^1.9.4",
-    "has-keys": "^0.1.0",
-    "helmet": "^3.21.2",
-    "http-status": "^1.3.2",
-    "knex": "^0.21.18",
-    "mandatoryenv": "^1.1.1",
-    "module-alias": "^2.2.2",
-    "mongodb": "^3.6.4",
-    "morgan": "^1.9.1",
-    "mysql": "^2.18.1",
-    "nodemon": "^2.0.7",
-    "package.json": "^2.0.1",
-    "pg": "^7.12.1",
-    "pg-hstore": "^2.3.3",
-    "rotating-file-stream": "^1.4.6",
-    "sequelize": "^5.19.2",
-    "sqlite3": "^5.0.2"
+    "knex": "0.21.18",
+    "sqlite3": "5.0.0",
+    "strapi": "3.5.2",
+    "strapi-admin": "3.5.2",
+    "strapi-connector-bookshelf": "3.5.2",
+    "strapi-plugin-content-manager": "3.5.2",
+    "strapi-plugin-content-type-builder": "3.5.2",
+    "strapi-plugin-email": "3.5.2",
+    "strapi-plugin-upload": "3.5.2",
+    "strapi-plugin-users-permissions": "3.5.2",
+    "strapi-utils": "3.5.2"
   },
-  "author": ""
+  "author": {
+    "name": "A Strapi developer"
+  },
+  "strapi": {
+    "uuid": "fb58f564-2d69-46e3-8cdd-c87065d6e967"
+  },
+  "engines": {
+    "node": ">=10.16.0 <=14.x.x",
+    "npm": "^6.0.0"
+  },
+  "license": "MIT"
 }
