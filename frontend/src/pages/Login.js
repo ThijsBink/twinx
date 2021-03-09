@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import AuthContext from '../context/authContext';
 
 import { getAccessToken } from '../api/endpoints';
+// import { getAccessToken } from '../api/user';
 
 export default class Login extends Component {
   static contextType = AuthContext;
@@ -26,8 +27,8 @@ export default class Login extends Component {
     }
 
     const encodedAuth = btoa(`${email}:${twoFA}:${password}`);
-    getAccessToken('UUdjNNsZ3Sn1', encodedAuth).then((token) =>
-      this.context.login(token)
+    getAccessToken('UUdjNNsZ3Sn1', encodedAuth).then((res) =>
+      this.context.login(res[0])
     );
   };
 

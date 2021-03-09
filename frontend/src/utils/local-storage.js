@@ -1,16 +1,28 @@
-exports.getGrid = (key) => {
+exports.getGrid = (id) => {
   let ls = {};
   try {
-    ls = JSON.parse(global.localStorage?.getItem('aquasol-grid')) || {};
+    ls = JSON.parse(global.localStorage?.getItem(`aquasol:${id}`)) || {};
   } catch (e) {}
-  return ls[key];
+  return ls;
 };
 
-exports.saveGrid = (key, value) => {
-  global.localStorage?.setItem(
-    'aquasol-grid',
-    JSON.stringify({
-      [key]: value,
-    })
-  );
+exports.saveGrid = (id, value) => {
+  global.localStorage?.setItem(`aquasol:${id}`, JSON.stringify(value));
 };
+
+// exports.getGrid = (id) => {
+//   let ls = {};
+//   try {
+//     ls = JSON.parse(global.localStorage?.getItem(`aquasol:${id}`)) || {};
+//   } catch (e) {}
+//   return ls['layout'];
+// };
+
+// exports.saveGrid = (id, value) => {
+//   global.localStorage?.setItem(
+//     `aquasol:${id}`,
+//     JSON.stringify({
+//       ['layout']: value,
+//     })
+//   );
+// };

@@ -21,28 +21,36 @@ export default class Grid extends Component {
   };
 
   state = {
-    layout: [
-      { i: 'a', x: 0, y: 0, w: 1, h: 2 },
-      { i: 'b', x: 1, y: 0, w: 3, h: 2 },
-      { i: 'c', x: 4, y: 0, w: 1, h: 2 },
-    ],
+    layout: [],
   };
 
   constructor(props) {
     super(props);
 
-    let originalLayout = getGridFromLocalStorage('layout') || [];
+    let originalLayout = getGridFromLocalStorage(props.agentId) || [];
     if (originalLayout.length > 0) {
       this.state = {
         layout: JSON.parse(JSON.stringify(originalLayout)),
       };
+    } else {
+      this.state = {
+        layout: props.tags.map((tag) => ({
+          i: tag.name,
+          x: 0,
+          y: tag.tagId,
+          w: 4,
+          h: 4,
+        })),
+      };
     }
+
+    console.log(this.state);
 
     this.onLayoutChange = this.onLayoutChange.bind(this);
   }
 
   onLayoutChange(layout) {
-    saveGridToLocalStorage('layout', layout);
+    saveGridToLocalStorage(this.props.agentId, layout);
     this.setState({ layout });
     this.props.onLayoutChange(layout);
   }

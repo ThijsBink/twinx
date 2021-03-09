@@ -1,13 +1,15 @@
 const makeRequest = (params, resParams, apiVersion = '2') => {
-  let URL = 'https://api.ayayot.com:443/';
+  let URL = 'https://api.ayayot.com/';
 
   if (params.hasOwnProperty('location')) {
     URL += params['location'];
     if (params.hasOwnProperty('fields') && params['fields'].length > 0) {
-      URL += '?fields=' + params['fields'].map((f) => f + ',').slice(0, -1);
-    } else if (params.hasOwnProperty('data')) {
-      URL += '/data';
+      // URL += ('?fields=' + params['fields'].map((f) => f + ',')).slice(0, -1);
+      URL += '?fields=' + params['fields'].map((f) => f);
     }
+    // else if (params.hasOwnProperty('data')) {
+    //   URL += '/data';
+    // }
   }
 
   let options = {
@@ -34,18 +36,23 @@ const makeRequest = (params, resParams, apiVersion = '2') => {
     // options.body = JSON.stringify(params['body']);
   }
 
+  console.log(URL);
+  console.log(options);
+
   return fetch(URL, options)
     .then((res) => {
+      console.log(res);
       if (res.status !== 200 && res.status !== 201) {
         throw new Error('Failed!');
       }
       return res.json();
     })
-    .then((resData) =>
-      resParams.length > 0
+    .then((resData) => {
+      console.log(resData.data);
+      return resParams.length > 0
         ? resParams.map((p) => resData.data[p])
-        : resData.data
-    )
+        : resData.data;
+    })
     .catch((err) => console.log(err));
 };
 
@@ -70,7 +77,7 @@ exports.requestCompaniesList = (applicationId, token) =>
   makeRequest(
     {
       location: 'companies',
-      fields: ['publicId, name'],
+      fields: ['publicId', 'name'],
       headers: {
         'Api-Application': applicationId,
         'Content-Type': 'application/json',
@@ -84,7 +91,7 @@ exports.requestAgentsList = (applicationId, token, companyId) =>
   makeRequest(
     {
       location: 'agents',
-      fields: ['publicId, name'],
+      fields: ['publicId', 'name'],
       headers: {
         'Api-Application': applicationId,
         'Api-Company': companyId,
@@ -99,7 +106,7 @@ exports.requestRolesList = (applicationId, token, companyId) =>
   makeRequest(
     {
       location: 'roles',
-      fields: ['publicId, name'],
+      fields: ['publicId', 'name'],
       headers: {
         'Api-Application': applicationId,
         'Api-Company': companyId,
@@ -114,7 +121,7 @@ exports.requestGroupList = (applicationId, token, companyId) =>
   makeRequest(
     {
       location: 'groups',
-      fields: ['publicId, name'],
+      fields: ['publicId', 'name'],
       headers: {
         'Api-Application': applicationId,
         'Api-Company': companyId,
@@ -187,7 +194,54 @@ exports.getData = (applicationId, token, companyId, sourceId, tags) =>
   makeRequest(
     {
       location: `/data`,
-      fields: ['publicId', 'name', 'ipAddress'],
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: [
+        {
+          source: { publicId: sourceId },
+          tags: tags.map((tag) => ({
+            id: tag.id,
+            preAggr: 'raw',
+            queries: [
+              {
+                ref: tag.name,
+                limit: 10,
+                offset: 0,
+              },
+            ],
+          })),
+          // [
+          //   {
+          //     id: 16,
+          //     preAggr: 'raw',
+          //     queries: [
+          //       {
+          //         ref: 'hello',
+          //         limit: 10,
+          //         offset: 0,
+          //       },
+          //     ],
+          //   },
+          // ],
+          // start:
+          //   '{{start timestamp of measurements format: 2021-01-14T11:00:00+00:00}}',
+          // end:
+          //   '{{end timestamp of measurements format: 2021-01-14T12:59:59+00:00}}',
+          // timeZone: 'utc',
+        },
+      ],
+    },
+    [] // !
+  );
+
+exports.getWSToken = (applicationId, token, companyId, agentId) =>
+  makeRequest(
+    {
+      location: 'auth-tokens/data',
       headers: {
         'Api-Application': applicationId,
         'Api-Company': companyId,
@@ -195,49 +249,9 @@ exports.getData = (applicationId, token, companyId, sourceId, tags) =>
         Authorization: `Bearer ${token}`,
       },
       body: {
-        X: [
-          {
-            source: { publicId: sourceId },
-            tags: [
-              {
-                id: '${Any tag you want data from as INTEGER (remove quotes)}',
-                preAggr: 'raw',
-                queries: [
-                  {
-                    ref: '${I would insert the tagname here}',
-                    limit: 500,
-                    offset: 0,
-                  },
-                ],
-              },
-            ],
-            start:
-              '{{start timestamp of measurements format: 2021-01-14T11:00:00+00:00}}',
-            end:
-              '{{end timestamp of measurements format: 2021-01-14T12:59:59+00:00}}',
-            timeZone: 'utc',
-          },
-        ],
-      },
-    },
-    [] // !
-  );
-
-exports.getWSToken = (applicationId, token, companyId) =>
-  makeRequest(
-    {
-      location: 'auth-tokens',
-      data: true,
-      headers: {
-        'Api-Application': applicationId,
-        'Api-Company': companyId,
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
         expiresIn: 3600,
-        agents: [{ publicId: 'YYU9A91jDGeb' }],
-      }),
+        agents: [{ publicId: agentId }],
+      },
     },
     ['secretId'] // !
   );

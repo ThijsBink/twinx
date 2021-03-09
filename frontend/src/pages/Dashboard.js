@@ -1,45 +1,81 @@
 import React, { Component } from 'react';
 
-import DashboardList from '../components/dashboard/general/List';
-import DashboardItemPage from '../components/dashboard/individual/View';
+import AgentsList from '../components/agents/AgentsList';
+import AgentView from '../components/agents/AgentView';
+import Spinner from '../components/spinner/Spinner';
+
+import ApiContext from '../context/apiContext';
+
+import { requestAgentsList } from '../api/endpoints';
 
 export default class Dashboard extends Component {
+  static contextType = ApiContext;
+
   state = {
-    items: [
-      { name: 'item 1', id: 0 },
-      { name: 'item 2', id: 1 },
-      { name: 'item 3', id: 2 },
-      { name: 'item 4', id: 3 },
-    ],
-    selectedItem: null,
+    agents: [],
+    selectedAgent: null,
+    isLoading: false,
+  };
+  isActive = true;
+
+  componentDidMount() {
+    this.fetchAgents();
+  }
+
+  componentWillUnmount() {
+    this.isActive = false;
+  }
+
+  fetchAgents = () => {
+    this.setState({ isLoading: true });
+    requestAgentsList(
+      this.context.applicationId,
+      this.context.token,
+      this.context.companyId
+    )
+      .then((res) => {
+        if (this.isActive) {
+          this.setState({ agents: res, isLoading: false });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        if (this.isActive) {
+          this.setState({ isLoading: false });
+        }
+      });
   };
 
-  selectItemHandler = (itemId) => {
-    console.log(`Clicked item ${itemId}`);
+  selectAgentHandler = (id) => {
+    console.log(`Clicked item ${id}`);
     this.setState({
-      selectedItem: this.state.items.find((item) => item.id === itemId),
+      selectedAgent: this.state.agents.find((agent) => agent.publicId === id),
     });
   };
 
   selectReturnHandler = () => {
     this.setState({
-      selectedItem: null,
+      selectedAgent: null,
     });
   };
 
   render() {
-    return this.state.selectedItem ? (
-      <DashboardItemPage
-        item={this.state.selectedItem}
+    return this.state.selectedAgent ? (
+      <AgentView
+        agent={this.state.selectedAgent}
         onReturn={this.selectReturnHandler.bind(this)}
       />
     ) : (
       <>
         <h1>Dashboard</h1>
-        <DashboardList
-          items={this.state.items}
-          onSelectItem={this.selectItemHandler}
-        />
+        {this.state.isLoading ? (
+          <Spinner />
+        ) : (
+          <AgentsList
+            agents={this.state.agents}
+            onSelectAgent={this.selectAgentHandler}
+          />
+        )}
       </>
     );
   }
