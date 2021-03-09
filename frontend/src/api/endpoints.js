@@ -1,155 +1,246 @@
-const GET_REQ = 'GET';
-const POST_REQ = 'POST';
+const makeRequest = (params, resParams, apiVersion = '2') => {
+  let URL = 'https://api.ayayot.com:443/';
 
-const checkStatus = (res) => {
-  if (res.status !== 200 && res.status !== 201) {
-    throw new Error('Failed!');
+  if (params.hasOwnProperty('location')) {
+    URL += params['location'];
+    if (params.hasOwnProperty('fields') && params['fields'].length > 0) {
+      URL += '?fields=' + params['fields'].map((f) => f + ',').slice(0, -1);
+    } else if (params.hasOwnProperty('data')) {
+      URL += '/data';
+    }
   }
-  return res.json();
-};
 
-// exports.requestEndpointsList = fetch('https://api.ayayot.com', {
-//   method: GET_REQ,
-//   headers: {
-//     'Api-Version': '2',
-//   },
-// })
-// .then((res) => checkStatus(res))
-// .then((resData) => console.log(resData.data))
-// .catch((err) => console.log(err));
+  let options = {
+    headers: {
+      'Api-Version': apiVersion,
+    },
+    method: 'GET',
+  };
+
+  if (params.hasOwnProperty('headers')) {
+    options.headers = {
+      ...options.headers,
+      ...params['headers'],
+    };
+  }
+
+  if (params.hasOwnProperty('body')) {
+    options = {
+      ...options,
+      method: 'POST',
+      body: JSON.stringify(params['body']),
+    };
+    // options.method = 'POST';
+    // options.body = JSON.stringify(params['body']);
+  }
+
+  return fetch(URL, options)
+    .then((res) => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error('Failed!');
+      }
+      return res.json();
+    })
+    .then((resData) =>
+      resParams.length > 0
+        ? resParams.map((p) => resData.data[p])
+        : resData.data
+    )
+    .catch((err) => console.log(err));
+};
 
 exports.getAccessToken = (applicationId, encodedAuth) =>
-  fetch(`https://api.ayayot.com:443/access-tokens?fields=secretId`, {
-    method: POST_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Content-Type': 'application/json',
-      Authorization: `Basic ${encodedAuth}`,
+  makeRequest(
+    {
+      location: 'access-tokens',
+      fields: ['secretId'],
+      headers: {
+        'Api-Application': applicationId,
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${encodedAuth}`,
+      },
+      body: {
+        expiresIn: 3600,
+      },
     },
-    body: JSON.stringify({ expiresIn: 3600 }),
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => {
-      console.log(resData);
-      if (resData.status === 'success') {
-        return resData.data.secretId;
-      } else {
-        console.log('Unauthorized');
-      }
-    })
-    .catch((err) => console.log(err));
+    ['secretId']
+  );
 
-exports.requestCompaniesList = (applicationId, token) => {
-  fetch('https://api.ayayot.com/companies?fields=publicId,name', {
-    method: GET_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+exports.requestCompaniesList = (applicationId, token) =>
+  makeRequest(
+    {
+      location: 'companies',
+      fields: ['publicId, name'],
+      headers: {
+        'Api-Application': applicationId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => console.log(resData.data))
-    .catch((error) => console.log('error', error));
-};
+    [] // !
+  );
 
 exports.requestAgentsList = (applicationId, token, companyId) =>
-  fetch('https://api.ayayot.com/agents?fields=publicId,name', {
-    method: GET_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Api-Company': companyId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  makeRequest(
+    {
+      location: 'agents',
+      fields: ['publicId, name'],
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => console.log(resData.data))
-    .catch((error) => console.log('error', error));
+    [] // !
+  );
 
 exports.requestRolesList = (applicationId, token, companyId) =>
-  fetch('https://api.ayayot.com/roles?fields=publicId,name', {
-    method: GET_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Api-Company': companyId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  makeRequest(
+    {
+      location: 'roles',
+      fields: ['publicId, name'],
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => console.log(resData.data))
-    .catch((error) => console.log('error', error));
+    [] // !
+  );
 
 exports.requestGroupList = (applicationId, token, companyId) =>
-  fetch('https://api.ayayot.com/groups?fields=publicId,name', {
-    method: GET_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Api-Company': companyId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  makeRequest(
+    {
+      location: 'groups',
+      fields: ['publicId, name'],
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => console.log(resData.data))
-    .catch((error) => console.log('error', error));
+    [] // !
+  );
 
 exports.requestUsersList = (applicationId, token, companyId) =>
-  fetch('https://api.ayayot.com/users', {
-    method: GET_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Api-Company': companyId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  makeRequest(
+    {
+      location: 'users',
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => console.log(resData.data))
-    .catch((error) => console.log('error', error));
+    [] // !
+  );
 
-exports.requestData = (applicationId, token, companyId) =>
-  fetch('https://api.ayayot.com/users', {
-    method: GET_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Api-Company': companyId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+exports.getUserCompany = (applicationId, token) =>
+  makeRequest(
+    {
+      location: 'companies',
+      fields: ['publicId', 'name'],
+      headers: {
+        'Api-Application': applicationId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => console.log(resData.data))
-    .catch((error) => console.log('error', error));
+    [] // !
+  );
+
+exports.getTagsList = (applicationId, token, companyId, agentId) =>
+  makeRequest(
+    {
+      location: `agents/${agentId}/data-tags`,
+      fields: ['publicId', 'name', 'tagId'],
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    [] // !
+  );
+
+exports.getDataSources = (applicationId, token, companyId, agentId) =>
+  makeRequest(
+    {
+      location: `agents/${agentId}/data-sources`,
+      fields: ['publicId', 'name', 'ipAddress'],
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    [] // !
+  );
+
+exports.getData = (applicationId, token, companyId, sourceId, tags) =>
+  makeRequest(
+    {
+      location: `/data`,
+      fields: ['publicId', 'name', 'ipAddress'],
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        X: [
+          {
+            source: { publicId: sourceId },
+            tags: [
+              {
+                id: '${Any tag you want data from as INTEGER (remove quotes)}',
+                preAggr: 'raw',
+                queries: [
+                  {
+                    ref: '${I would insert the tagname here}',
+                    limit: 500,
+                    offset: 0,
+                  },
+                ],
+              },
+            ],
+            start:
+              '{{start timestamp of measurements format: 2021-01-14T11:00:00+00:00}}',
+            end:
+              '{{end timestamp of measurements format: 2021-01-14T12:59:59+00:00}}',
+            timeZone: 'utc',
+          },
+        ],
+      },
+    },
+    [] // !
+  );
 
 exports.getWSToken = (applicationId, token, companyId) =>
-  fetch('https://api.ayayot.com/auth-tokens/data', {
-    method: POST_REQ,
-    headers: {
-      'Api-Version': '2',
-      'Api-Application': applicationId,
-      'Api-Company': companyId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  makeRequest(
+    {
+      location: 'auth-tokens',
+      data: true,
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        expiresIn: 3600,
+        agents: [{ publicId: 'YYU9A91jDGeb' }],
+      }),
     },
-    body: JSON.stringify({
-      expiresIn: 3600,
-      agents: [{ publicId: 'YYU9A91jDGeb' }],
-    }),
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => {
-      console.log(resData.data.secretId);
-    })
-    .catch((error) => console.log('error', error));
+    ['secretId'] // !
+  );
 
 exports.startLiveData = (wsToken, agentId) => {
   let wsUri = `wss://wse.mdr.ams.dkn.ayayot.com/agents/${agentId},/data-realtime`;
@@ -170,21 +261,4 @@ exports.startLiveData = (wsToken, agentId) => {
   };
 };
 
-//TODO get tags list
-exports.getTagsList = (token) =>
-  fetch('https://api.ayayot.com/users', {
-    method: GET_REQ,
-    headers: {
-      'Api-Version': '2',
-      // 'Api-Application': applicationId,
-      // 'Api-Company': companyId,
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => checkStatus(res))
-    .then((resData) => console.log(resData.data))
-    .catch((error) => console.log('error', error));
-
 //TODO get current data for agents
-//TODO
