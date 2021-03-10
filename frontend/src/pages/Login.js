@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-
 import AuthContext from '../context/authContext';
-
 import { getAccessToken } from '../api/endpoints';
+import '../css/Login.css';
+import { Button, Form} from 'react-bootstrap';
+import logo from '../img/logo.png';
+
+
 // import { getAccessToken } from '../api/user';
 
 export default class Login extends Component {
@@ -34,26 +37,27 @@ export default class Login extends Component {
 
   render() {
     return (
-      <>
-        <h1>Login Page</h1>
-        <form className='auth-form' onSubmit={this.submitHandler}>
-          <div className='form-control'>
-            <label htmlFor='email'>E-mail</label>
-            <input type='email' id='email' ref={this.emailEl} />
-          </div>
-          <div className='form-control'>
-            <label htmlFor='password'>Password</label>
-            <input type='password' id='password' ref={this.passwordEl} />
-          </div>
-          <div className='form-control'>
-            <label htmlFor='twoFA'>Two-Factor Token (if enabled)</label>
-            <input type='text' id='twoFA' ref={this.twoFAEl} />
-          </div>
-          <div className='form-actions'>
-            <button type='submit'>Login</button>
-          </div>
-        </form>
-      </>
+      <div className="login">
+        <div className="loginComponent">
+          <Form className='auth-form' onSubmit={this.submitHandler}>
+            <div className="logo-div">
+              <img className="logo-image" src={logo} alt="logo"></img>
+            </div>
+            <div className='form-control'>
+              <Form.Control type="email" placeholder="Enter email" ref={this.emailEl} />
+            </div>
+            <div className='form-control'>
+              <Form.Control type='password' id='password' placeholder="Password" ref={this.passwordEl} />
+            </div>
+            <div className='form-control'>
+              <Form.Control type='text' id='twoFA' placeholder="Two-Factor Token" ref={this.twoFAEl} />
+            </div>
+            <div className='form-actions'>
+              <Button className="log-btn" type='submit'>Login</Button>
+            </div>
+          </Form>
+        </div>
+      </div>
     );
   }
 }
