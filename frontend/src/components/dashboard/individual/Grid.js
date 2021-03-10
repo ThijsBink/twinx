@@ -39,7 +39,7 @@ export default class Grid extends Component {
           x: 0,
           y: tag.tagId,
           w: 4,
-          h: 4,
+          h: 5,
         })),
       };
     }
