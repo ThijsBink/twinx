@@ -7,7 +7,6 @@ import ApiContext from './context/apiContext';
 import Navbar from './components/navigation/Navbar';
 import LoginPage from './pages/Login';
 import DashboardPage from './pages/Dashboard';
-import UsersPage from './pages/Users';
 import ApiPage from './pages/Api';
 
 export default class App extends Component {
@@ -48,9 +47,6 @@ export default class App extends Component {
                 )}
                 {this.state.token && (
                   <Route path='/dashboard' component={DashboardPage} exact />
-                )}
-                {this.state.token && (
-                  <Route path='/users' component={UsersPage} exact />
                 )}
                 {this.state.token && (
                   <Route path='/api' component={ApiPage} exact />
