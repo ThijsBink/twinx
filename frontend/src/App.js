@@ -9,6 +9,7 @@ import LoginPage from './pages/Login';
 import DashboardPage from './pages/Dashboard';
 import UsersPage from './pages/Users';
 import ApiPage from './pages/Api';
+import AdminPage from './pages/Admin';
 
 export default class App extends Component {
   state = {
@@ -51,6 +52,9 @@ export default class App extends Component {
                 )}
                 {this.state.token && (
                   <Route path='/users' component={UsersPage} exact />
+                )}
+                {this.state.token && (
+                  <Route path='/admin' component={AdminPage} exact />
                 )}
                 {this.state.token && (
                   <Route path='/api' component={ApiPage} exact />

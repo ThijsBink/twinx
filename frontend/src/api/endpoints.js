@@ -73,6 +73,8 @@ exports.getAccessToken = (applicationId, encodedAuth) =>
     ['secretId']
   );
 
+
+
 exports.requestCompaniesList = (applicationId, token) =>
   makeRequest(
     {

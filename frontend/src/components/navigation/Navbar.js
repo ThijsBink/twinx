@@ -19,6 +19,9 @@ const Navbar = () => {
               <NavLink to='/api'>Api</NavLink>
             </li>
             <li>
+              <NavLink to='/admin'>Admin</NavLink>
+            </li>
+            <li>
               <button onClick={context.logout}>Logout</button>
             </li>
           </ul>
