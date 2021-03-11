@@ -7,7 +7,6 @@ import ApiContext from './context/apiContext';
 import Navbar from './components/navigation/Navbar';
 import LoginPage from './pages/Login';
 import DashboardPage from './pages/Dashboard';
-import UsersPage from './pages/Users';
 import ApiPage from './pages/Api';
 import AdminPage from './pages/Admin';
 
