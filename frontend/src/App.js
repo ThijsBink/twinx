@@ -50,9 +50,6 @@ export default class App extends Component {
                   <Route path='/dashboard' component={DashboardPage} exact />
                 )}
                 {this.state.token && (
-                  <Route path='/users' component={UsersPage} exact />
-                )}
-                {this.state.token && (
                   <Route path='/admin' component={AdminPage} exact />
                 )}
                 {this.state.token && (

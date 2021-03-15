@@ -36,19 +36,19 @@ const makeRequest = (params, resParams, apiVersion = '2') => {
     // options.body = JSON.stringify(params['body']);
   }
 
-  console.log(URL);
-  console.log(options);
+  // console.log(URL);
+  // console.log(options);
 
   return fetch(URL, options)
     .then((res) => {
-      console.log(res);
-      if (res.status !== 200 && res.status !== 201) {
+      // console.log(res);
+      if (res.status !== 200 && res.status !== 201 && res.status !== 403) {
         throw new Error('Failed!');
       }
       return res.json();
     })
     .then((resData) => {
-      console.log(resData.data);
+      // console.log(resData.data);
       return resParams.length > 0
         ? resParams.map((p) => resData.data[p])
         : resData.data;
@@ -103,6 +103,54 @@ exports.requestAgentsList = (applicationId, token, companyId) =>
     },
     [] // !
   );
+
+exports.requestUsersList = (applicationId, token, companyId) => {
+  makeRequest(
+    {
+      location : 'users',
+      headers : {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    []
+  );
+}
+
+
+exports.inviteUserToGroupWithRole = (applicationId, token, companyId, brandingURL, groupId, roleId, emailAddress, message) => {
+  makeRequest(
+    {
+      location: 'invites',
+      headers: {
+        'Api-Application': applicationId,
+        'Api-Company': companyId,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Api-Branding' : brandingURL
+      },
+      body: [
+        {
+          "groupRoles": [
+            {
+              "group": {
+                "publicId": groupId
+              },
+              "role": {
+                "publicId": roleId
+              }
+            }
+          ],
+          "emailAddress": emailAddress,
+          "message": message
+        }
+      ],
+    },
+    []
+  );
+}
 
 exports.requestRolesList = (applicationId, token, companyId) =>
   makeRequest(
