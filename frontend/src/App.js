@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import AuthContext from './context/authContext';
 import ApiContext from './context/apiContext';
 
-import Navbar from './components/navigation/Navbar';
+import Navigbar from './components/navigation/Navbar';
 import LoginPage from './pages/Login';
 import DashboardPage from './pages/Dashboard';
 import ApiPage from './pages/Api';
@@ -40,7 +40,7 @@ export default class App extends Component {
                 logout: this.logout,
               }}
             >
-              {this.state.token && <Navbar />}
+              {this.state.token && <Navigbar />}
               <Switch>
                 {!this.state.token && (
                   <Route path='/' component={LoginPage} exact />
