@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { inviteUserToGroupWithRole, requestAgentsList, requestGroupList, requestRolesList, requestUsersList } from '../api/endpoints';
 import FormTemplate from '../components/admin/FormTemplate';
 import Table from '../components/admin/Table';
-import Formulas from '../components/admin/Formulas';
+import Formula from '../components/admin/Formula';
 import apiContext from '../context/apiContext';
-import {getCustomFormulas} from '../utils/local-storage'
+import {deleteCustomFormula, getCustomFormulas} from '../utils/local-storage'
 
 export default class Admin extends Component {
    static contextType = apiContext
@@ -19,7 +19,7 @@ export default class Admin extends Component {
 
       this.state = { 
          users: [],
-         formulas : getCustomFormulas('ivXFzduo8aHT'),
+         formulas : [],
          userTableHead: ['User ID', 'Name'],
          email : '',
          group : '',
@@ -43,12 +43,14 @@ export default class Admin extends Component {
          requestUsersList(cont.applicationId, cont.token, cont.companyId),
          requestGroupList(cont.applicationId, cont.token, cont.companyId),
          requestRolesList(cont.applicationId, cont.token, cont.companyId),
-         requestAgentsList(cont.applicationId, cont.token, cont.companyId)
-      ]).then(([userList, groupList, roleList, agentList]) => {
+         requestAgentsList(cont.applicationId, cont.token, cont.companyId),
+         getCustomFormulas('ivXFzduo8aHT')
+      ]).then(([userList, groupList, roleList, agentList, formulasList]) => {
          this.setState({users : userList})
          this.setState({groups : groupList})
          this.setState({roles : roleList})
          this.setState({agents: agentList})
+         this.setState({formulas : formulasList})
          console.log(this.state)
          this.makeInviteForm();
       }).catch((err) => {
@@ -156,6 +158,26 @@ export default class Admin extends Component {
          message).then(res => console.log(res)); //TODO fix undefined.then()
    }
 
+   updateFormulaTable = () => {
+      new Promise((resolve, reject) => {
+         try {
+            resolve(getCustomFormulas('ivXFzduo8aHT'));
+         } catch (err) {
+            reject (err);
+         }
+      }).then(formulasList => this.setState({formulas : formulasList}))
+
+   }
+
+   deleteFormulaFromTable = (row, content) => {
+      console.log(row)
+      deleteCustomFormula(row);
+      this.updateFormulaTable()
+      console.log('success')      
+   }
+
+
+
    render() {
       return (
          <div className="row">
@@ -165,7 +187,7 @@ export default class Admin extends Component {
                <Table tableContent={this.state.users} />
                </div>
                <div className='row'>
-               <Table tableContent={this.state.formulas} />
+               <Table deleteFunction={this.deleteFormulaFromTable} tableContent={this.state.formulas} />
                </div>
             </div>
             <div className="col-3">
@@ -174,7 +196,12 @@ export default class Admin extends Component {
             </div>
             <div className="col-3">
                <h1>Make custom calculation</h1>
-               <Formulas agents={this.state.agents} groups={this.state.groups} roles={this.state.roles} />
+               {
+                  this.state.agents.length > 0 ?
+                  <Formula update={this.updateFormulaTable} agents={this.state.agents} groups={this.state.groups} roles={this.state.roles} />
+                  :
+                  ''
+               }
             </div>
 
       </div>

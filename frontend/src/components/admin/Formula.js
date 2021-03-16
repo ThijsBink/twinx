@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { FormControl } from 'react-bootstrap';
 import Select from 'react-select';
-import { getDataSources, getTagsList, requestAgentsList } from '../../api/endpoints';
+import { getDataSources, getTagsList } from '../../api/endpoints';
 import apiContext from '../../context/apiContext';
 import {getCustomFormulas, saveCustomFormulas} from '../../utils/local-storage';
 
@@ -31,14 +31,14 @@ export default class Formula extends Component {
     }
 
     componentDidMount() {
-        requestAgentsList(this.context.applicationId, this.context.token, this.context.companyId)
-        .then(agentRes => {
-            let agentSelectArray = [];
-            agentRes.forEach(agent => {
-                agentSelectArray.push({value : agent.publicId, label : agent.name})
-            })
-            this.setState({agentSelect : agentSelectArray})
-        });
+        let agents = this.props.agents
+        console.log(agents);
+        let agentSelectArray = [];
+        agents.forEach(agent => {
+            agentSelectArray.push({value : agent.publicId, label : agent.name})
+        })
+        this.setState({agentSelect : agentSelectArray});
+
     }
 
     loadSources = (select) => {
@@ -141,12 +141,25 @@ export default class Formula extends Component {
             customFormulas = [];
         }
 
-        try {
-            customFormulas.push(this.state.formula);
-            saveCustomFormulas(this.state.formula.agent, customFormulas)
-        } catch (e) {
-            console.log(e);
-        }
+        new Promise((resolve, reject) => {
+            try {
+                customFormulas.push(this.state.formula);
+                saveCustomFormulas(this.state.formula.agent, customFormulas)
+                resolve();
+            } catch (e) {
+                reject(e);
+            }        
+        }).then(
+            this.setState({addFunction : false,
+                fields : [],
+                formula : {
+                agent : '',
+                source : '',
+                values : []
+            }})
+        ).then(
+            this.props.update
+        )
 
     }
     
@@ -194,7 +207,7 @@ export default class Formula extends Component {
                             </div>
                             <div>
                                 {this.state.fields.map((value, index) => {
-                                    return value.content;
+                                    return <div key={index}>{value.content}</div>;
                                 })}
                             </div>
                             <div className='form-control'>

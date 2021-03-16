@@ -18,6 +18,34 @@ exports.getCustomFormulas = (id) => {
   return ls;
 }
 
+exports.deleteCustomFormula = (row) => {
+  console.log(row.agent)
+  let list = this.getCustomFormulas(row.agent);
+  console.log(list);
+  let newList = [];
+  list.forEach(index => {
+    let same = true;
+    if (index.source === row.source) {
+      for (let i = 0; i < index.values.length; i++) {
+        if (index.values[i] !== row.values[i]) {
+          same = false;
+          break;
+        }
+      }
+
+      if (!same) {
+        newList.push(index);
+      }
+      // do nothing as we want to remove this index
+    } else {
+      newList.push(index);
+    }
+  })
+  console.log(newList);
+
+  this.saveCustomFormulas(row.agent, newList);
+}
+
 exports.saveCustomFormulas = (id, formulaList) => {
   global.localStorage?.setItem(`aquasolFormulas:${id}`, JSON.stringify(formulaList));
 }

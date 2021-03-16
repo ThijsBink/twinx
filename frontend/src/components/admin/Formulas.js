@@ -19,6 +19,10 @@ export default class Formulas extends Component {
 
     }
 
+    onSave = () {
+        alert('saved');
+    }
+
     addFunction = () => {
         alert('clicked');
     }
