@@ -2,17 +2,23 @@ import React from 'react';
 
 import AgentItem from './AgentItem';
 
-const AgentsList = (props) => (
-  <ul>
-    {props.agents.map((agent) => (
-      <AgentItem
-        key={agent.publicId}
-        id={agent.publicId}
-        name={agent.name}
-        onSelectAgent={props.onSelectAgent}
-      />
-    ))}
-  </ul>
-);
+import './AgentsList.css';
 
-export default AgentsList;
+export default function AgentsList({ agents, companies }) {
+  return (
+    <div className='grid-container'>
+      {agents.map((agent) => {
+        return (
+          <AgentItem
+            key={agent.publicId}
+            agent={agent}
+            companyName={
+              companies.find((company) => company.publicId === agent.companyId)
+                .name
+            }
+          />
+        );
+      })}
+    </div>
+  );
+}

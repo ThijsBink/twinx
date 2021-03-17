@@ -1,11 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const AgentItem = (props) => (
-  <li>
-    <button onClick={props.onSelectAgent.bind(this, props.id)}>
-      {props.name}
-    </button>
-  </li>
-);
+import './AgentItem.css';
 
-export default AgentItem;
+export default function AgentItem({ agent, companyName }) {
+  return (
+    <div className='agent-container'>
+      {companyName}
+      <h5>
+        <Link to={`/agent/${agent.publicId}`}>{agent.name}</Link>
+      </h5>
+    </div>
+  );
+}

@@ -1,0 +1,14 @@
+.view-container {
+  /* padding: 10px; */
+}
+
+.view-item {
+  border: 1px solid #3a3a3a;
+  background-color: #e2f3e3;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+}

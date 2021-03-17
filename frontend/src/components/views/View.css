@@ -1,0 +1,15 @@
+.view {
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+}
+
+.view .title {
+  color: #383838;
+  display: flex;
+  justify-content: center;
+  text-decoration: underline;
+}
