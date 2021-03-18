@@ -3,9 +3,12 @@ import React, { useContext, useState } from 'react';
 import { initializeIxon } from '../../api/ixon';
 
 import useStore from '../store/useStore';
-import { ACTIONS, INTERPRETERS } from '../store/constants';
+import { ACTIONS } from '../store/constants';
 
 import { formatDate } from '../../utils/date';
+
+import logger from '../../utils/logger';
+const log = logger('CONTEXT');
 
 const ApiContext = React.createContext();
 export const useApi = () => useContext(ApiContext);
@@ -16,6 +19,8 @@ export function ApiProvider({ children }) {
     companies: [],
     agents: [],
   });
+
+  log();
 
   async function login(authToken) {
     const ixon = await initializeIxon(authToken);
@@ -32,7 +37,7 @@ export function ApiProvider({ children }) {
       type: ACTIONS.ADD_COMPANIES,
       payload: { companies: fetchedCompanies },
     });
-    console.log('COMPANIES SET TO', fetchedCompanies);
+    log('COMPANIES SET TO', fetchedCompanies);
 
     let fetchedAgents = [];
     (
@@ -80,27 +85,17 @@ export function ApiProvider({ children }) {
         })),
       },
     });
-    console.log('AGENTS SET TO', fetchedAgents);
+    log('AGENTS SET TO', fetchedAgents);
   }
 
-  async function fetchData(agentId, dataSourceId) {
-    const tags = interpret({
-      type: INTERPRETERS.GET_AGENT_USED_TAGS,
-      params: {
-        agentId,
-      },
-    });
-    const agent = interpret({
-      type: INTERPRETERS.GET_AGENT,
-      params: {
-        agentId,
-      },
-    });
+  async function fetchData(agent) {
     const dataBatches = await client.requestData(
       agent.companyId,
-      tags, // tags.map((tag) => tag.tagId),
-      dataSourceId,
-      300
+      agent.tags, // tags.map((tag) => tag.tagId),
+      agent.dataSources[0].publicId,
+      100,
+      0
+      // 10
     );
 
     let data = {};
@@ -113,7 +108,7 @@ export function ApiProvider({ children }) {
       }
     */
 
-    tags.forEach((tag) => (data[tag.publicId] = []));
+    agent.tags.forEach((tag) => (data[tag.publicId] = []));
     dataBatches.forEach((dataBatch) =>
       dataBatch.points.forEach((point) =>
         Object.keys(point.values).forEach((tagId) =>
@@ -124,8 +119,6 @@ export function ApiProvider({ children }) {
         )
       )
     );
-
-    console.log(data);
     return data;
   }
 

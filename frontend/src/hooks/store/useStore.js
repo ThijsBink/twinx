@@ -1,5 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import useLocalStorage from '../local-storage/useLocalStorage';
+import logger from '../../utils/logger';
 
 import { ACTIONS, INTERPRETERS } from './constants';
 
@@ -64,7 +65,8 @@ import { ACTIONS, INTERPRETERS } from './constants';
 }*/
 
 function reducer(state, action) {
-  console.log('DISPATCHED', action, 'to', state);
+  const log = logger('REDUCER');
+  log('DISPATCHED', action, 'TO', state);
   switch (action.type) {
     case ACTIONS.ADD_COMPANIES:
       return {
@@ -171,36 +173,43 @@ export default function useStore(initialValue) {
     initialValue
   );
   const [state, dispatch] = useReducer(reducer, localStore);
+  const log = logger('INTERPRET');
 
   useEffect(() => {
     setLocalStore(state);
   }, [state]);
 
   function interpret(interpreter) {
-    console.log('INTERPRET', state);
+    // log(state);
     switch (interpreter.type) {
       case INTERPRETERS.GET_COMPANIES:
+        log('GET COMPANIES');
         return state.companies;
 
       case INTERPRETERS.GET_AGENTS:
+        log('GET AGENTS');
         return state.agents;
 
       case INTERPRETERS.GET_AGENT:
+        log('GET AGENT');
         return state.agents.find(
           (agent) => agent.publicId === interpreter.params.agentId
         );
 
       case INTERPRETERS.GET_COMPANY_AGENTS:
+        log('GET COMPANY AGENTS');
         return state.agents.find(
           (agent) => agent.companyId === interpreter.params.companyId
         );
 
       case INTERPRETERS.GET_AGENT_VIEWS:
+        log('GET AGENT VIEWS');
         return state.agents.find(
           (agent) => agent.agentId === interpreter.params.agentId
         ).views;
 
       case INTERPRETERS.GET_SIGNALLING_VIEWS: {
+        log('GET SIGNALLING VIEWS');
         let views = [];
         state.agents.forEach((agent) =>
           agent.views.forEach((view) => {
@@ -211,11 +220,13 @@ export default function useStore(initialValue) {
       }
 
       case INTERPRETERS.GET_AGENT_TAGS:
+        log('GET AGENT TAGS');
         return state.agents.find(
           (agent) => agent.publicId === interpreter.params.agentId
         ).tags;
 
       case INTERPRETERS.GET_AGENT_SIGNALS_TAGS: {
+        log('GET AGENT SIGNALS TAGS');
         let tags = [];
         const agent = state.agents.find(
           (agent) => agent.publicId === interpreter.params.agentId
@@ -235,6 +246,7 @@ export default function useStore(initialValue) {
       }
 
       case INTERPRETERS.GET_AGENT_USED_TAGS: {
+        log('GET AGENT USED TAGS');
         let tags = [];
         const agent = state.agents.find(
           (agent) => agent.publicId === interpreter.params.agentId
@@ -252,6 +264,7 @@ export default function useStore(initialValue) {
       }
 
       case INTERPRETERS.GET_BATCH_REQUEST_PARAMS_FOR_AGENT: {
+        break;
       }
 
       default:

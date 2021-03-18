@@ -1,70 +1,90 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Backdrop from '../components/backdrop/Backdrop';
 import { v4 as uuid } from 'uuid';
 
 import { useApi } from '../hooks/context/ApiContext';
 import { ACTIONS, INTERPRETERS } from '../hooks/store/constants';
 
+import Backdrop from '../components/backdrop/Backdrop';
 import ViewsGrid from '../components/views/ViewsGrid';
-import AddNewView from '../components/views/AddNewView';
+import Modal from '../components/modal/Modal';
 
-export default function Agent({ match }) {
+// import logger from '../utils/logger';
+// const log = logger('AGENT');
+
+export default function Agent({
+  match: {
+    params: { agentId },
+  },
+}) {
   const [creating, setCreating] = useState(false);
   const [data, setData] = useState([]);
   const { interpret, dispatch, fetchData } = useApi();
-  const { agentId } = match.params;
-
-  let timeout; // TODO make a timeout hook for updating all data
-  const mounted = useRef(false);
-
-  const { name, tags, dataSources, views } = interpret({
+  const interval = useRef(null);
+  const agent = interpret({
     type: INTERPRETERS.GET_AGENT,
     params: {
-      agentId: agentId,
+      agentId,
     },
   });
+  const viewRef = {
+    name: useRef(),
+    dataSource: useRef(),
+    tagId: useRef(),
+    type: useRef(),
+  };
+
+  // log('ON RENDER', agent.views.length);
 
   async function updateData() {
-    if (views.length > 0 && mounted) {
-      const newData = await fetchData(agentId, dataSources[0].publicId);
-      setData(newData);
-      console.log(newData);
+    if (agent.views.length > 0) {
+      // log('ON UPDATE', agent.views.length);
+      const newData = await fetchData(agent);
+      if (interval) {
+        setData(newData);
+      }
+      // log(newData);
     }
   }
 
-  useEffect(() => {
-    mounted.current = true;
-    return () => (mounted.current = false);
-  });
-
-  useEffect(
-    () =>
-      (timeout = setTimeout(() => {
-        updateData();
-      }, 10000)),
-    [data]
-  );
-
-  function startCreateView() {
-    setCreating(true);
+  function createInterval() {
+    updateData();
+    clearInterval(interval.current);
+    // log('CLEARED INTERVAL', interval.current);
+    interval.current = setInterval(() => {
+      updateData();
+      // log('UPDATING FROM INTERVAL');
+    }, 10000);
+    // log('CREATED INTERVAL', interval.current);
   }
 
-  function createViewHandler(viewName, dataSourceId, tagId, type) {
-    console.log({ viewName, dataSourceId, tagId, type });
+  useEffect(() => createInterval(), [agent.views.length]);
 
-    let viewId = uuid();
+  useEffect(() => {
+    return () => {
+      // log('CLOSED');
+      clearInterval(interval.current);
+      interval.current = null;
+      // log('CLEARED INTERVAL AT CLOSE', interval.current);
+    };
+  }, []);
+
+  const startCreateView = () => setCreating(true);
+  const cancelCreateView = () => setCreating(false);
+
+  function createViewHandler() {
+    const viewId = uuid();
     dispatch({
       type: ACTIONS.ADD_VIEW,
       payload: {
-        agentId,
+        agentId: agent.publicId,
         view: {
           id: viewId,
-          name: viewName,
-          dataSourceId,
-          tagsIds: [tagId],
+          name: viewRef.name.current.value,
+          dataSourceId: viewRef.dataSource.current.value,
+          tagsIds: [viewRef.tagId.current.value],
           signals: [],
           settings: {
-            type,
+            type: viewRef.type.current.value,
             stroke: '#8884d8',
             background: '#e2f3e3',
             dataGrid: {
@@ -79,22 +99,17 @@ export default function Agent({ match }) {
       },
     });
 
-    setCreating(false);
+    cancelCreateView();
   }
 
   function onLayoutChangeHandler(layout) {
     dispatch({
       type: ACTIONS.UPDATE_LAYOUT,
       payload: {
-        agentId,
+        agentId: agent.publicId,
         layout,
       },
     });
-
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    updateData();
   }
 
   return (
@@ -102,19 +117,59 @@ export default function Agent({ match }) {
       {creating && (
         <>
           <Backdrop />
-          <AddNewView
-            tags={tags}
-            dataSources={dataSources}
-            createViewHandler={createViewHandler}
-          />
+          <Modal
+            title='Create view'
+            canCancel
+            onCancel={cancelCreateView}
+            canConfirm
+            onConfirm={createViewHandler}
+          >
+            <form className='add-new-view-form'>
+              <div className='selections'>
+                <div>
+                  <h4>Name</h4>
+                  <input type='text' ref={viewRef.name} />
+                </div>
+                <div>
+                  <h4>Data Source</h4>
+                  <select name='data-source' ref={viewRef.dataSource}>
+                    {agent.dataSources.map((dataSource) => (
+                      <option
+                        key={dataSource.publicId}
+                        value={dataSource.publicId}
+                      >
+                        {dataSource.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <h4>Tag</h4>
+                  <select name='tag' ref={viewRef.tagId}>
+                    {agent.tags.map((tag) => (
+                      <option key={tag.publicId} value={tag.publicId}>
+                        {tag.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <h4>Type</h4>
+                  <select name='type' ref={viewRef.type}>
+                    <option value='chart'>Chart</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </Modal>
         </>
       )}
       <div className='agent-bar'>
-        <h3>{name}</h3>
+        <h3>{agent.name}</h3>
         <button onClick={startCreateView}>+ Add view</button>
       </div>
       <ViewsGrid
-        views={views}
+        views={agent.views}
         data={data}
         onLayoutChangeHandler={onLayoutChangeHandler}
       />

@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+import logger from '../utils/logger';
+const log = logger('API');
+
 const instance = axios.create({
   baseURL: 'https://api.ayayot.com/',
   headers: {
@@ -25,8 +28,8 @@ export function initializeIxon(encodedAuth, applicationId = 'UUdjNNsZ3Sn1') {
 }
 
 function ixon(token, applicationId) {
-  function requestCompanies() {
-    return instance({
+  const requestCompanies = () =>
+    instance({
       method: 'get',
       url: '/companies?fields=publicId,name',
       headers: {
@@ -37,10 +40,9 @@ function ixon(token, applicationId) {
     }).then((res) => {
       return res.data.data;
     });
-  }
 
-  function requestAgents(companyId) {
-    return instance({
+  const requestAgents = (companyId) =>
+    instance({
       method: 'get',
       url: '/agents?fields=publicId,name,deviceId',
       headers: {
@@ -52,10 +54,9 @@ function ixon(token, applicationId) {
     }).then((res) => {
       return res.data.data;
     });
-  }
 
-  function requestTags(companyId, agentId) {
-    return instance({
+  const requestTags = (companyId, agentId) =>
+    instance({
       method: 'get',
       url: `agents/${agentId}/data-tags?fields=publicId,name,tagId,variable.type`,
       headers: {
@@ -65,13 +66,12 @@ function ixon(token, applicationId) {
         'Content-Type': 'application/json',
       },
     }).then((res) => {
-      // console.log(res.data.data);
+      // log(res.data.data);
       return res.data.data;
     });
-  }
 
-  function requestDataSources(companyId, agentId) {
-    return instance({
+  const requestDataSources = (companyId, agentId) =>
+    instance({
       method: 'get',
       url: `agents/${agentId}/data-sources`,
       headers: {
@@ -83,9 +83,8 @@ function ixon(token, applicationId) {
     }).then((res) => {
       return res.data.data;
     });
-  }
 
-  function requestData(
+  const requestData = (
     companyId,
     tags,
     sourceId,
@@ -94,14 +93,8 @@ function ixon(token, applicationId) {
     // start = '2021-02-02T00:00:00+00:00',
     // end = '2021-02-02T23:59:59+00:00',
     // timeZone = 'CET'
-  ) {
-    console.log('REQUESTING DATA WITH ', {
-      companyId,
-      tags,
-      sourceId,
-      limit,
-    });
-    return instance({
+  ) =>
+    instance({
       method: 'post',
       url: `/data`,
       headers: {
@@ -132,31 +125,9 @@ function ixon(token, applicationId) {
         },
       ],
     }).then((res) => {
-      console.log(res.data.data);
+      log(res.data.data);
       return res.data.data;
     });
-  }
-
-  function requestWSToken(companyId, agentIds) {
-    return instance({
-      method: 'post',
-      url: '/auth-tokens/data',
-      headers: {
-        'Api-Application': applicationId,
-        Authorization: `Bearer ${token}`,
-        'Api-Company': companyId,
-        'Content-Type': 'application/json',
-      },
-      data: {
-        expiresIn: 3600,
-        agents: agentIds.map((agentId) => ({
-          publicId: agentId,
-        })),
-      },
-    }).then((res) => {
-      return res.data.data;
-    });
-  }
 
   return {
     requestCompanies,
@@ -164,6 +135,5 @@ function ixon(token, applicationId) {
     requestTags,
     requestDataSources,
     requestData,
-    requestWSToken,
   };
 }

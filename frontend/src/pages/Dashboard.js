@@ -7,12 +7,14 @@ import { useApi } from '../hooks/context/ApiContext';
 
 export default function Dashboard() {
   const { interpret } = useApi();
+
   const companies = interpret({
     type: INTERPRETERS.GET_COMPANIES,
   });
+
   const agents = interpret({
     type: INTERPRETERS.GET_AGENTS,
-  });
+  }).map(({ publicId, name, companyId }) => ({ publicId, name, companyId }));
 
   return (
     <>
