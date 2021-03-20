@@ -3,10 +3,11 @@ import Chart from './Chart';
 
 import './View.css';
 
-const View = ({ name, data }) => (
+const View = ({ view, data, onEdit }) => (
   <div className='view'>
     <div className='title'>
-      <h6>{name}</h6>
+      <h6>{view.name}</h6>
+      <button onClick={() => onEdit(view)}>O</button>
     </div>
     <Chart data={data} />
   </div>

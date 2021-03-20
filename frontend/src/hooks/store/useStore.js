@@ -35,10 +35,10 @@ import { ACTIONS, INTERPRETERS } from './constants';
                 {
                     id: string
                     name: string
+                    color: color
                     dataSourceId: string
                     formula: [string]
                     tagsIds: [int]
-                    realTimeValue: float
                     signals: [
                         {
                             id: string
@@ -46,17 +46,12 @@ import { ACTIONS, INTERPRETERS } from './constants';
                             threshold: float
                         }
                     ]
-                    settings: {
-                        type: enum['line' / 'bar' / 'area' / 'single' / ...]
-                        color: color
-                        background: color
-                        dataGrid: {
-                            i
-                            x
-                            y
-                            w
-                            h
-                        }
+                    dataGrid: {
+                        i
+                        x
+                        y
+                        w
+                        h
                     }
                 }
             ]
@@ -151,12 +146,9 @@ function reducer(state, action) {
             agent.publicId === action.payload.agentId
               ? agent.views.map((view) => ({
                   ...view,
-                  settings: {
-                    ...view.settings,
-                    dataGrid: action.payload.layout.find(
-                      (viewLayout) => viewLayout.viewId === view.id
-                    ).dataGrid,
-                  },
+                  dataGrid: action.payload.layout.find(
+                    (viewLayout) => viewLayout.viewId === view.id
+                  ).dataGrid,
                 }))
               : agent.views,
         })),

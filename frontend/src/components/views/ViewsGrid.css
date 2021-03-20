@@ -3,8 +3,8 @@
 }
 
 .view-item {
-  border: 1px solid #3a3a3a;
-  background-color: #e2f3e3;
+  border: 1px solid #3a3a3a40;
+  background-color: #effffe;
   border-radius: 5px;
   display: flex;
   flex-direction: column;

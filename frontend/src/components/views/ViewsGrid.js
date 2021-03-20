@@ -9,8 +9,13 @@ import './ViewsGrid.css';
 
 const ReactGridLayout = WidthProvider(RGL);
 
-export default function ViewsGrid({ views, data, onLayoutChangeHandler }) {
-  const layout = views.map((view) => view.settings.dataGrid);
+export default function ViewsGrid({
+  views,
+  data,
+  onLayoutChangeHandler,
+  onEditHandler,
+}) {
+  const layout = views.map((view) => view.dataGrid);
 
   function onLayoutChange(layout) {
     onLayoutChangeHandler(
@@ -24,6 +29,8 @@ export default function ViewsGrid({ views, data, onLayoutChangeHandler }) {
     );
   }
 
+  // console.log(views);
+
   return (
     <ReactGridLayout
       cols={20}
@@ -36,9 +43,14 @@ export default function ViewsGrid({ views, data, onLayoutChangeHandler }) {
         <div className='view-container' key={view.id}>
           <div
             className='view-item'
+            style={{ backgroundColor: view.color }}
             // onMouseDown={(e) => e.stopPropagation()}
           >
-            <View name={view.name} data={data[view.tagsIds[0]]} />{' '}
+            <View
+              onEdit={onEditHandler}
+              view={view}
+              data={data[view.tagsIds[0]]}
+            />{' '}
             {
               //TODO
             }
