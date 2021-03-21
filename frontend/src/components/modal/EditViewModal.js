@@ -108,16 +108,16 @@ export default function EditViewModal({
             <ColorPicker value={color} onChange={(c) => setColor(c)} />
           </Form.Group>
           <Form.Group>
-          Collect{' '}
-          <input
-            type='number'
-            min='1'
-            max='120'
-            step='1'
-            value={hours}
-            onChange={(e) => setHours(e.target.value)}
-          />{' '}
-          hours
+            Collect{' '}
+            <input
+              type='number'
+              min='1'
+              max='120'
+              step='1'
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+            />{' '}
+            hours
           </Form.Group>
           <button className="view-btn" onClick={() => onConfirmHandler()}>Confirm</button>
         </Form>
