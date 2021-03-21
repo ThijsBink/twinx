@@ -3,6 +3,7 @@ import Backdrop from '../backdrop/Backdrop';
 import ColorPicker from '../inputs/ColorPicker';
 
 import './EditViewModal.css';
+import { Form } from 'react-bootstrap';
 
 export default function EditViewModal({
   isCreate,
@@ -59,71 +60,83 @@ export default function EditViewModal({
       <div className='modal-container'>
         <header className='modal-header'>
           <h1>{isCreate ? 'Create new view' : 'Edit view'}</h1>
-          <button onClick={onCancel}>X</button>
+          <button className="btn-close" onClick={onCancel}>X</button>
         </header>
-        <section>
-          <form className='add-new-view-form'>
-            <div className='selections'>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                  <h4>Name</h4>
-                  <input
-                    type='text'
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <ColorPicker value={color} onChange={(c) => setColor(c)} />
-                </div>
-              </div>
-              <div>
-                <h4>Data Source</h4>
-                <select
-                  name='data-source'
-                  value={dataSource.publicId}
-                  onChange={(e) => setDataSource(e.target.value)}
-                >
-                  {dataSourceList.map((ds) => (
-                    <option key={ds.publicId} value={ds.publicId}>
-                      {ds.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <h4>Formula</h4>
-                <select
-                  name='tag'
-                  value={tag.name}
-                  onChange={(e) => setTag(e.target.value)}
-                >
-                  {tagList.map((t) => (
-                    <option key={t.publicId} value={t.publicId}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                Collect{' '}
-                <input
-                  type='number'
-                  min='1'
-                  max='120'
-                  step='1'
-                  value={hours}
-                  onChange={(e) => setHours(e.target.value)}
-                />{' '}
-                hours
-              </div>
-            </div>
-          </form>
-        </section>
-        <section className='modal-actions'>
-          <button onClick={() => onConfirmHandler()}>Confirm</button>
-        </section>
+        <Form>
+          <Form.Group>
+            <Form.Label>Name</Form.Label>
+            <Form.Control className="field" type="text" placeholder="" />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Data Source</Form.Label>
+            <Form.Control
+              as="select"
+              className="mr-sm-2"
+              id="inlineFormCustomSelect"
+              name='data-source'
+              value={dataSource.publicId}
+              onChange={(e) => setDataSource(e.target.value)}
+              custom
+            >
+              {dataSourceList.map((ds) => (
+                <option key={ds.publicId} value={ds.publicId}>
+                  {ds.name}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Formula</Form.Label>
+            <Form.Control
+                as="select"
+                className="mr-sm-2"
+                id="inlineFormCustomSelect"
+                name='tag'
+                value={tag.name}
+                onChange={(e) => setTag(e.target.value)}
+                custom
+            >
+              {tagList.map((t) => (
+                      <option key={t.publicId} value={t.publicId}>
+                        {t.name}
+                      </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <ColorPicker value={color} onChange={(c) => setColor(c)} />
+          </Form.Group>
+          <Form.Group>
+          Collect{' '}
+          <input
+            type='number'
+            min='1'
+            max='120'
+            step='1'
+            value={hours}
+            onChange={(e) => setHours(e.target.value)}
+          />{' '}
+          hours
+          </Form.Group>
+          <button className="view-btn" onClick={() => onConfirmHandler()}>Confirm</button>
+        </Form>
       </div>
+
+
+
     </>
   );
 }
+
+
+// <Form>
+//   <Form.Group controlId="">
+//     <Form.Label>Email address</Form.Label>
+//     <Form.Control type="email" placeholder="Enter email" />
+//   </Form.Group>
+//   <Form.Group controlId="formGroupPassword">
+//     <Form.Label>Password</Form.Label>
+//     <Form.Control type="password" placeholder="Password" />
+//   </Form.Group>
+// </Form>

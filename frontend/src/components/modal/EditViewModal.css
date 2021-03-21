@@ -1,11 +1,32 @@
 .modal-container {
-  width: 90%;
+  width: 50%;
   background: #fff;
   box-shadow: 0 2px 8px #00000026;
   position: fixed;
-  top: 20vh;
-  left: 5%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 100;
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+  border-radius: 10px;
+}
+.modal-header {
+  margin-bottom: -30px;
+}
+.modal-header h1{
+  font-size: 32px;
+}
+
+.modal-container Form{
+  width: 100%;
+  padding: 7vh;
+  margin: auto;
+}
+
+.field {
+  border: 1px solid #ced4da !important;
+  text-align: start;
 }
 
 .modal-content {
@@ -23,4 +44,29 @@
     width: 30rem;
     left: calc((100% - 30rem) / 2);
   }
+}
+
+@media only screen and (max-width: 991px) {
+  .modal-header h1 {
+    font-size: 22px;
+  }
+  
+}
+
+.modal-container button.view-btn {
+  background-color: #0049CB;
+  color: white;
+  border: none;
+  text-align: center;
+  padding: 10px;
+  margin: 20px 0 30px;
+  float: right;
+}
+
+.btn-close {
+  color: black;
+  border: none;
+  background-color: white;
+  font-size: larger;
+  font-weight: 800;
 }

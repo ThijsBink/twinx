@@ -8,6 +8,9 @@ import ViewsGrid from '../components/views/ViewsGrid';
 import EditViewModal from '../components/modal/EditViewModal';
 
 import logger from '../utils/logger';
+
+import './Agent.css';
+
 const log = logger('AGENT');
 
 export default function Agent({
@@ -156,15 +159,17 @@ export default function Agent({
       )}
       <div className='agent-bar'>
         <h3>{agent.name}</h3>
-        <button onClick={() => setIsCreating(true)}>+ Add view</button>
+        <button className="view-btn" onClick={() => setIsCreating(true)}>Add View</button>
+        <div className="view-container">
+          <ViewsGrid
+            views={agent.views}
+            data={data} 
+            onLayoutChangeHandler={onLayoutChangeHandler}aaa
+            onEditHandler={(v) => setEditingView(v)}
+            // onEditHandler={onEditHandler}
+          />
+        </div>
       </div>
-      <ViewsGrid
-        views={agent.views}
-        data={data}
-        onLayoutChangeHandler={onLayoutChangeHandler}
-        onEditHandler={(v) => setEditingView(v)}
-        // onEditHandler={onEditHandler}
-      />
     </>
   );
 }
