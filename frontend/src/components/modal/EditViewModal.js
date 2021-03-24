@@ -55,22 +55,23 @@ export default function EditViewModal({
   };
 
   return (
-    <>
-      <Backdrop />
-      <div className='modal-container'>
-        <header className='modal-header'>
-          <h1>{isCreate ? 'Create new view' : 'Edit view'}</h1>
-          <button className="btn-close" onClick={onCancel}>X</button>
-        </header>
-        <Form>
-          <Form.Group>
-            <Form.Label>Name</Form.Label>
-            <Form.Control className="field" type="text" placeholder="" />
-          </Form.Group>
 
-          <Form.Group>
-            <Form.Label>Data Source</Form.Label>
-            <Form.Control
+    <>
+       <Backdrop />
+       <div className='modal-container'>
+         <header className='modal-header'>
+           <h1>{isCreate ? 'Create new view' : 'Edit view'}</h1>
+           <button className="btn-close" onClick={onCancel}>X</button>
+         </header>
+         <Form>
+           <Form.Group>
+             <Form.Label>Name</Form.Label>
+             <Form.Control className="field" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="" />
+           </Form.Group>
+
+           <Form.Group>
+             <Form.Label>Data Source</Form.Label>
+             <Form.Control
               as="select"
               className="mr-sm-2"
               id="inlineFormCustomSelect"
@@ -98,9 +99,9 @@ export default function EditViewModal({
                 custom
             >
               {tagList.map((t) => (
-                      <option key={t.publicId} value={t.publicId}>
-                        {t.name}
-                      </option>
+                <option key={t.publicId} value={t.publicId}>
+                  {t.name}
+                </option>
               ))}
             </Form.Control>
           </Form.Group>
@@ -123,20 +124,6 @@ export default function EditViewModal({
         </Form>
       </div>
 
-
-
     </>
   );
 }
-
-
-// <Form>
-//   <Form.Group controlId="">
-//     <Form.Label>Email address</Form.Label>
-//     <Form.Control type="email" placeholder="Enter email" />
-//   </Form.Group>
-//   <Form.Group controlId="formGroupPassword">
-//     <Form.Label>Password</Form.Label>
-//     <Form.Control type="password" placeholder="Password" />
-//   </Form.Group>
-// </Form>

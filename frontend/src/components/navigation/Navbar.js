@@ -5,8 +5,12 @@ import './Navbar.css';
 import { Button, Nav, Navbar} from 'react-bootstrap';
 import logo from '../../img/logo-bg-blue.jpeg';
 
+
+
 export default function Navigbar() {
 const { logout } = useApi();
+
+
 
   return (
     <header className="header">
