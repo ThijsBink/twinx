@@ -6,11 +6,9 @@ import { ACTIONS, INTERPRETERS } from '../hooks/store/constants';
 
 import ViewsGrid from '../components/views/ViewsGrid';
 import EditViewModal from '../components/modal/EditViewModal';
+import EditSignalModal from '../components/modal/EditSignalModal';
 
 import logger from '../utils/logger';
-
-import './Agent.css';
-
 const log = logger('AGENT');
 
 export default function Agent({
@@ -19,8 +17,8 @@ export default function Agent({
   },
 }) {
   const [isCreating, setIsCreating] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [editingView, setEditingView] = useState(false);
+  const [isSignal, setIsSignal] = useState(false);
   const [data, setData] = useState([]);
   const { interpret, dispatch, fetchData } = useApi();
   const interval = useRef(null);
@@ -157,19 +155,31 @@ export default function Agent({
           view={editingView}
         />
       )}
-      <div className='agent-bar'>
+      {isSignal && (
+        <EditSignalModal
+          onCancel={() => setIsSignal(false)}
+          onConfirm={() => setIsSignal(false)}
+        />
+      )}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginRight: '1rem',
+          marginLeft: '1rem',
+        }}
+      >
         <h3>{agent.name}</h3>
-        <button className="view-btn" onClick={() => setIsCreating(true)}>Add View</button>
-        <div className="view-container">
-          <ViewsGrid
-            views={agent.views}
-            data={data} 
-            onLayoutChangeHandler={onLayoutChangeHandler}aaa
-            onEditHandler={(v) => setEditingView(v)}
-            // onEditHandler={onEditHandler}
-          />
-        </div>
+        <button onClick={() => setIsCreating(true)}>+ Add view</button>
       </div>
+      <ViewsGrid
+        views={agent.views}
+        data={data}
+        onLayoutChangeHandler={onLayoutChangeHandler}
+        onEditHandler={(v) => setEditingView(v)}
+        onSignalHandler={() => setIsSignal(true)}
+        // onEditHandler={onEditHandler}
+      />
     </>
   );
 }

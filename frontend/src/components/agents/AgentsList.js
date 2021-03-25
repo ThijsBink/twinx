@@ -1,7 +1,7 @@
 import React from 'react';
 
 import AgentItem from './AgentItem';
-import { Card, CardDeck } from 'react-bootstrap';
+
 import './AgentsList.css';
 
 const AgentsList = ({ agents, companies }) => (
@@ -16,7 +16,6 @@ const AgentsList = ({ agents, companies }) => (
               .name
           }
         />
-        
       );
     })}
   </div>

@@ -3,13 +3,18 @@ import Chart from './Chart';
 
 import './View.css';
 
-const View = ({ view, data, onEdit }) => (
+const View = ({ view, data, onEdit, onSignal }) => (
   <div className='view'>
     <div className='title'>
       <h6>{view.name}</h6>
-      <button onClick={() => onEdit(view)}>O</button>
+      <div>
+        <button onClick={() => onSignal()}>S</button>
+        <button onClick={() => onEdit(view)}>E</button>
+      </div>
     </div>
-    <Chart data={data} />
+    <div style={{ width: '100%', height: '100%', margin: 0 }}>
+      <Chart data={data} />
+    </div>
   </div>
 );
 

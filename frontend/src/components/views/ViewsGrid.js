@@ -14,6 +14,7 @@ export default function ViewsGrid({
   data,
   onLayoutChangeHandler,
   onEditHandler,
+  onSignalHandler,
 }) {
   const layout = views.map((view) => view.dataGrid);
 
@@ -48,6 +49,7 @@ export default function ViewsGrid({
           >
             <View
               onEdit={onEditHandler}
+              onSignal={onSignalHandler}
               view={view}
               data={data[view.tagsIds[0]]}
             />{' '}

@@ -1,14 +1,5 @@
 .grid-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  grid-template-columns: repeat(5, 0.1fr);
+  display: grid;
+  grid-template-columns: auto auto;
   padding: 1rem;
-}
-
-@media only screen and (max-width: 991px) {
-  .grid-container{
-    justify-content: center;
-  }
-  
 }

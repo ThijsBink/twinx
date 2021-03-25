@@ -1,4 +1,4 @@
-/* .navbar ul {
+.navbar ul {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -10,48 +10,4 @@
 
 .navbar li {
   margin: 1rem;
-} */
-
-.navbar-brand {
-  width: 160px;
-  min-width: 160px;
-  text-align: center;
-  padding: 0;
 }
-
-.header {
-  background-color: #0049CB;
-}
-
-.navText {
-  color: white !important;
-}
-
-.navText:hover {
-  color: #C3FF00 !important;
-}
-
-.navText:active {
-  color: #C3FF00 !important;
-}
-
-.navbar-dark .navbar-toggler {
-  color: white !important;
-  border: none ;
-}
-
-.navbar-collapse{
-  text-align: center;
-}
-
-.btn-nav {
-  border: none !important;
-  background-color: #0049CB !important;
-}
-
-.btn-nav:hover {
-  color: #C3FF00 !important;
-  border: none;
-  background-color: #0049CB;
-}
-
