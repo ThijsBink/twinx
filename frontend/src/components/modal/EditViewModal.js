@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Backdrop from '../backdrop/Backdrop';
 import ColorPicker from '../inputs/ColorPicker';
-
+import { Button } from '../../general-styles';
 import './EditViewModal.css';
+import closeBtn from '../../img/close-icn.png';
 
 export default function EditViewModal({
   isCreate,
@@ -52,6 +53,7 @@ export default function EditViewModal({
     console.log('lol');
     onConfirm(name, color, dataSource, tag, Math.floor(hours));
   };
+  
 
   return (
     <>
@@ -59,35 +61,34 @@ export default function EditViewModal({
       <div className='modal-container'>
         <header className='modal-header'>
           <h1>{isCreate ? 'Create new view' : 'Edit view'}</h1>
-          <button onClick={onCancel}>X</button>
+          {/* <button class="btn-close" aria-label="Close" onClick={onCancel}>
+            <img src={closeBtn} alt=""/>
+          </button> */}
         </header>
         <section className='modal-content'>
           <form className='add-new-view-form'>
             <div className='selections'>
               <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginRight: '1rem',
-                }}
+                // style={{
+                //   display: 'flex',
+                //   justifyContent: 'space-between',
+                //   marginRight: '1rem',
+                // }}
               >
-                <div style={{ display: 'flex', margin: '2px' }}>
-                  <h4>Name</h4>
+                <div className="form-item">
+                  <label className="field-title">Name</label>
                   <input
-                    style={{ marginLeft: '5px' }}
+                    className="form-field"
                     type='text'
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-                <div>
-                  <ColorPicker value={color} onChange={(c) => setColor(c)} />
-                </div>
               </div>
-              <div style={{ display: 'flex', margin: '2px' }}>
-                <h4>Data Source</h4>
+              <div className="form-item">
+                <label className="field-title">Data Source</label>
                 <select
-                  style={{ marginLeft: '5px' }}
+                  className="form-field"
                   name='data-source'
                   value={dataSource.publicId}
                   onChange={(e) => setDataSource(e.target.value)}
@@ -99,10 +100,10 @@ export default function EditViewModal({
                   ))}
                 </select>
               </div>
-              <div style={{ display: 'flex', margin: '2px' }}>
-                <h4>Formula</h4>
+              <div className="form-item">
+                <label className="field-title">Formula</label>
                 <select
-                  style={{ marginLeft: '5px' }}
+                  className="form-field"
                   name='tag'
                   value={tag.name}
                   onChange={(e) => setTag(e.target.value)}
@@ -114,9 +115,10 @@ export default function EditViewModal({
                   ))}
                 </select>
               </div>
-              <div>
-                Collect{' '}
+              <div style={{ marginTop: '5px' }}>
+                <label className="field-title" style={{ marginRight: '5px', marginTop: '10px' }}>Collect{' '}</label> 
                 <input
+                  className="form-field"
                   type='number'
                   min='1'
                   max='120'
@@ -124,15 +126,22 @@ export default function EditViewModal({
                   value={hours}
                   onChange={(e) => setHours(e.target.value)}
                 />{' '}
-                hours
+                <label style={{ marginLeft: '5px' }}>hours</label> 
+              </div>
+              <div style={{ marginTop: '5px' }}>
+                <label className="field-title" style={{ marginTop: '10px' }}> Select Colour</label>
+                <ColorPicker value={color} onChange={(c) => setColor(c)} />
               </div>
             </div>
           </form>
         </section>
-        <section className='modal-actions'>
-          <button onClick={() => onConfirmHandler()}>Confirm</button>
-        </section>
+        <div className='modal-actions'>
+          <Button primary className="btn-cancel" aria-label="Close" onClick={onCancel}>Cancel</Button>
+          <Button primary onClick={() => onConfirmHandler()}>Confirm</Button>
+        </div>
       </div>
+
+      
     </>
   );
 }

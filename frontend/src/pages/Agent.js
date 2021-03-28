@@ -9,6 +9,10 @@ import EditViewModal from '../components/modal/EditViewModal';
 import EditSignalModal from '../components/modal/EditSignalModal';
 
 import logger from '../utils/logger';
+
+import './Agent.css';
+import { Button } from '../general-styles';
+
 const log = logger('AGENT');
 
 export default function Agent({
@@ -161,25 +165,22 @@ export default function Agent({
           onConfirm={() => setIsSignal(false)}
         />
       )}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginRight: '1rem',
-          marginLeft: '1rem',
-        }}
-      >
-        <h3>{agent.name}</h3>
-        <button onClick={() => setIsCreating(true)}>+ Add view</button>
+      <div className='agent-bar'>
+        <div className="agent-header">
+          <h3>{agent.name}</h3>
+          <Button primary className="view-btn" onClick={() => setIsCreating(true)}>New View</Button>
+        </div>
+        <div className="view-container">
+          <ViewsGrid
+            views={agent.views}
+            data={data} 
+            onLayoutChangeHandler={onLayoutChangeHandler}aaa
+            onEditHandler={(v) => setEditingView(v)}
+            // onEditHandler={onEditHandler}
+          />
+        </div>
       </div>
-      <ViewsGrid
-        views={agent.views}
-        data={data}
-        onLayoutChangeHandler={onLayoutChangeHandler}
-        onEditHandler={(v) => setEditingView(v)}
-        onSignalHandler={() => setIsSignal(true)}
-        // onEditHandler={onEditHandler}
-      />
+
     </>
   );
 }

@@ -4,6 +4,7 @@ import AgentsList from '../components/agents/AgentsList';
 
 import { INTERPRETERS } from '../hooks/store/constants';
 import { useApi } from '../hooks/context/ApiContext';
+import './Dashboard.css';
 
 export default function Dashboard() {
   const { interpret } = useApi();
@@ -18,8 +19,10 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1>Dashboard</h1>
-      <AgentsList companies={companies} agents={agents} />
+      <div className="dash-body">
+        <h1>Dashboard</h1>
+        <AgentsList companies={companies} agents={agents} />
+      </div>  
     </>
   );
 }

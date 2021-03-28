@@ -3,5 +3,18 @@
   flex-direction: column;
   padding: 1rem;
   margin: 1rem;
-  border-style: solid;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 100ms;
+}
+
+.agent-container:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.agent-subcontainer {
+  padding: 2px 16px;
+}
+
+.agent-subcontainer  p{
+  margin-top: 20px;
 }
