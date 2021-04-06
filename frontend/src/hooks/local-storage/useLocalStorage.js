@@ -12,6 +12,13 @@ function getSavedValue(key, initialValue) {
   return initialValue;
 }
 
+/**
+ * Hook for state saved on local storage
+ *
+ * @param {*} key
+ * @param {*} initialValue
+ * @returns
+ */
 export default function useLocalStorage(key, initialValue) {
   const [value, setValue] = useState(() => getSavedValue(key, initialValue));
 

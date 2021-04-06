@@ -1,6 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import useLocalStorage from '../local-storage/useLocalStorage';
-import logger from '../../utils/logger';
+// import logger from '../../utils/logger';
 
 import { ACTIONS, INTERPRETERS } from './constants';
 
@@ -17,124 +17,96 @@ import { ACTIONS, INTERPRETERS } from './constants';
             publicId: string
             name: string
             companyId: string
-            dataSources: [
-              {
-                publicId: string
-                name: string
-              }
-            ]
             tags: [
                 {
                     publicId: string
                     name: string
                     tagId: int
-                    type: string
+                    sourceId: string
                 }
             ]
-            views: [
+            layout: [
                 {
-                    id: string
-                    name: string
-                    color: color
-                    dataSourceId: string
-                    formula: [string]
-                    tagsIds: [int]
-                    signals: [
-                        {
-                            id: string
-                            greaterThan: bool
-                            threshold: float
-                        }
-                    ]
-                    dataGrid: {
-                        i
-                        x
-                        y
-                        w
-                        h
-                    }
+                    i: string
+                    x: int
+                    y: int
+                    w: int
+                    h: int
                 }
             ]
+        }
+    ]
+    views: [
+        {
+            agentId: string
+            id: string
+            name: string
+            color: color
+            timeUnit: minute / hour / day / week / month
+            timeTicks: int
+            formula: string
+            formulaGraph: {...}
+            tagIdsList: [int]
+            signal: {
+                type: bool
+                threshold: float
+            }
         }
     ]
 }*/
 
 function reducer(state, action) {
-  const log = logger('REDUCER');
-  log('DISPATCHED', action, 'TO', state);
+  // const log = logger('REDUCER');
+  // log(action.type, action.payload);
   switch (action.type) {
     case ACTIONS.ADD_COMPANIES:
       return {
         ...state,
-        companies: action.payload.companies,
+        companies: action.payload,
       };
 
     case ACTIONS.ADD_AGENTS:
       return {
         ...state,
-        agents: action.payload.agents,
+        agents: action.payload,
       };
 
     case ACTIONS.ADD_VIEW:
       return {
         ...state,
-        agents: state.agents.map((agent) => ({
-          ...agent,
-          views:
-            agent.publicId === action.payload.agentId
-              ? [...agent.views, action.payload.view]
-              : agent.views,
-        })),
+        views: [...state.views, action.payload.view],
+      };
+
+    case ACTIONS.EDIT_VIEW:
+      return {
+        ...state,
+        views: state.views.map((view) =>
+          view.id === action.payload.viewId
+            ? {
+                ...view,
+                ...action.payload.viewParams,
+              }
+            : view
+        ),
       };
 
     case ACTIONS.DELETE_VIEW:
       return {
         ...state,
-        agents: state.agents.map((agent) => ({
-          ...agent,
-          views:
-            agent.publicId === action.payload.agentId
-              ? agent.views.filter((view) => view.id !== action.payload.viewId)
-              : agent.views,
-        })),
+        views: state.views.filter((view) => view.id !== action.payload.viewId),
       };
 
-    case ACTIONS.ADD_SIGNAL:
+    case ACTIONS.EDIT_SIGNAL:
       return {
         ...state,
-        agents: state.agents.map((agent) => ({
-          ...agent,
-          views:
-            agent.publicId === action.payload.agentId
-              ? agent.views.map((view) => ({
-                  ...view,
-                  signals:
-                    view.id === action.payload.agentId
-                      ? [...view.signals, action.payload.signal]
-                      : view.signals,
-                }))
-              : agent.views,
-        })),
-      };
-
-    case ACTIONS.DELETE_SIGNAL:
-      return {
-        ...state,
-        agents: state.agents.map((agent) => ({
-          ...agent,
-          views:
-            agent.publicId === action.payload.agentId
-              ? agent.views.map((view) => ({
-                  ...view,
-                  signals:
-                    view.id === action.payload.agentId
-                      ? view.signals.filter(
-                          (signal) => signal.id !== action.payload.signalId
-                        )
-                      : view.signals,
-                }))
-              : agent.views,
-        })),
+        views: state.views.map((view) =>
+          view.id === action.payload.viewId
+            ? {
+                ...view,
+                signal: action.payload.signal,
+              }
+            : view
+        ),
       };
 
     case ACTIONS.UPDATE_LAYOUT:
@@ -142,15 +114,10 @@ function reducer(state, action) {
         ...state,
         agents: state.agents.map((agent) => ({
           ...agent,
-          views:
+          layout:
             agent.publicId === action.payload.agentId
-              ? agent.views.map((view) => ({
-                  ...view,
-                  dataGrid: action.payload.layout.find(
-                    (viewLayout) => viewLayout.viewId === view.id
-                  ).dataGrid,
-                }))
-              : agent.views,
+              ? action.payload.layout
+              : agent.layout,
         })),
       };
 
@@ -165,99 +132,33 @@ export default function useStore(initialValue) {
     initialValue
   );
   const [state, dispatch] = useReducer(reducer, localStore);
-  const log = logger('INTERPRET');
 
   useEffect(() => {
     setLocalStore(state);
-  }, [state]);
+  }, [state, setLocalStore]);
 
   function interpret(interpreter) {
-    // log(state);
+    // const log = logger('INTERPRET');
+    // log(interpreter);
     switch (interpreter.type) {
       case INTERPRETERS.GET_COMPANIES:
-        log('GET COMPANIES');
         return state.companies;
 
       case INTERPRETERS.GET_AGENTS:
-        log('GET AGENTS');
         return state.agents;
 
       case INTERPRETERS.GET_AGENT:
-        log('GET AGENT');
         return state.agents.find(
           (agent) => agent.publicId === interpreter.params.agentId
-        );
-
-      case INTERPRETERS.GET_COMPANY_AGENTS:
-        log('GET COMPANY AGENTS');
-        return state.agents.find(
-          (agent) => agent.companyId === interpreter.params.companyId
         );
 
       case INTERPRETERS.GET_AGENT_VIEWS:
-        log('GET AGENT VIEWS');
-        return state.agents.find(
-          (agent) => agent.agentId === interpreter.params.agentId
-        ).views;
-
-      case INTERPRETERS.GET_SIGNALLING_VIEWS: {
-        log('GET SIGNALLING VIEWS');
-        let views = [];
-        state.agents.forEach((agent) =>
-          agent.views.forEach((view) => {
-            if (view.signals.length > 0) views.push(view);
-          })
+        return state.views.filter(
+          (view) => view.agentId === interpreter.params.agentId
         );
-        return views;
-      }
 
-      case INTERPRETERS.GET_AGENT_TAGS:
-        log('GET AGENT TAGS');
-        return state.agents.find(
-          (agent) => agent.publicId === interpreter.params.agentId
-        ).tags;
-
-      case INTERPRETERS.GET_AGENT_SIGNALS_TAGS: {
-        log('GET AGENT SIGNALS TAGS');
-        let tags = [];
-        const agent = state.agents.find(
-          (agent) => agent.publicId === interpreter.params.agentId
-        );
-        agent.views.forEach((view) => {
-          if (view.signals.length > 0) {
-            view.tagsIds.forEach((tagId) => {
-              if (!tags.find((tag) => tag.publicId === tagId)) {
-                tags.push(
-                  agent.tags.find((agentTag) => agentTag.publicId === tagId)
-                );
-              }
-            });
-          }
-        });
-        return tags;
-      }
-
-      case INTERPRETERS.GET_AGENT_USED_TAGS: {
-        log('GET AGENT USED TAGS');
-        let tags = [];
-        const agent = state.agents.find(
-          (agent) => agent.publicId === interpreter.params.agentId
-        );
-        agent.views.forEach((view) => {
-          view.tagsIds.forEach((tagId) => {
-            if (!tags.find((tag) => tag.publicId === tagId)) {
-              tags.push(
-                agent.tags.find((agentTag) => agentTag.publicId === tagId)
-              );
-            }
-          });
-        });
-        return tags;
-      }
-
-      case INTERPRETERS.GET_BATCH_REQUEST_PARAMS_FOR_AGENT: {
-        break;
-      }
+      case INTERPRETERS.GET_SIGNALING_VIEWS:
+        return state.views.filter((view) => view.signal.type !== 'none');
 
       default:
         return state;

@@ -1,5 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { GithubPicker } from 'react-color';
+import PropTypes from 'prop-types';
+
+const colorChoices = [
+  '#ff2c02',
+  '#ff9a02',
+  '#008c23',
+  '#0049cb',
+  '#6f02ff',
+  '#000000',
+];
+
+/**
+ * React-color documentation: https://casesandberg.github.io/react-color/
+ */
 
 export default function ColorPicker({ value, onChange }) {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
@@ -7,7 +21,7 @@ export default function ColorPicker({ value, onChange }) {
   const handleClick = () => setDisplayColorPicker((current) => !current);
   const handleClose = () => setDisplayColorPicker(false);
   const handleChange = (newColor) => {
-    onChange(newColor.hex);
+    onChange({ target: { name: 'color', value: newColor.hex } });
     handleClose();
   };
 
@@ -51,7 +65,7 @@ export default function ColorPicker({ value, onChange }) {
             onClick={handleClose}
           />
           <GithubPicker
-            colors={['#efeaff', '#eaffeb', '#ffeaea', '#fffdea']}
+            colors={colorChoices}
             width='87px'
             onChange={handleChange}
           />
@@ -60,3 +74,8 @@ export default function ColorPicker({ value, onChange }) {
     </div>
   );
 }
+
+ColorPicker.propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+};

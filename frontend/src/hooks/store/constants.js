@@ -1,176 +1,61 @@
-let i = 0;
 export const ACTIONS = {
-  ADD_COMPANIES: ++i,
+  ADD_COMPANIES: 'ADD_COMPANIES',
   /*
-      companies: [
-        {
-          publicId: string
-          name: string
-        }
-      ]
+      payload: Companies;
   */
 
-  ADD_AGENTS: ++i,
+  ADD_AGENTS: 'ADD_AGENTS',
   /*
-      agents: [
-          {
-            publicId: string
-            name: string
-            companyId: string
-            dataSources: [
-              {
-                publicId: string
-                name: string
-              }
-            ]
-            tags: [
-              {
-                publicId: string
-                name: string
-                tagId: int
-                type: string
-              }
-            ]
-          }
-        ]
+      payload: Agents;
   */
 
-  ADD_VIEW: ++i,
+  ADD_VIEW: 'ADD_VIEW',
   /*
-      agentId: string
-      view: {
-          id: string
-          name: string
-          dataSourceId: string
-          formula: string
-          tagIds: [int]
-          settings: {
-            type: enum['line' / 'bar' / 'area' / 'single' / ...]
-            color: color
-            background: color
-            brush: bool
-          }
-        }
-      ]
+      payload: { agentId: string; view: View };
   */
 
-  DELETE_VIEW: ++i,
+  EDIT_VIEW: 'EDIT_VIEW',
   /*
-      agentId: string
-      viewId: string
+      payload: { viewId: string, viewParams: ... };
   */
 
-  ADD_SIGNAL: ++i,
+  DELETE_VIEW: 'DELETE_VIEW',
   /*
-      agentId: string
-      viewId: string
-      signal: {
-        id: string
-        greaterThan: bool
-        threshold: float
-      }
+      payload: { viewId: string };
   */
 
-  DELETE_SIGNAL: ++i,
+  EDIT_SIGNAL: 'EDIT_SIGNAL',
   /*
-      agentId: string
-      viewId: string
-      signalId: string
+      payload: { viewId: string; signal: Signal };
   */
 
-  UPDATE_LAYOUT: ++i,
+  UPDATE_LAYOUT: 'UPDATE_LAYOUT',
   /*
-     agentId: string
-     layout: [
-       {
-         viewId: string
-         dataGrid: {...}
-       }
-     ]
+     payload: { agentId: string; layout: Layout };
  */
 };
 
 export const INTERPRETERS = {
-  GET_COMPANIES: ++i,
+  GET_COMPANIES: 'GET_COMPANIES',
+
+  GET_AGENTS: 'GET_AGENTS',
+
+  GET_AGENT: 'GET_AGENT',
   /*
-      >>>
-      companies: [...]
+      params: { agentId: string };
   */
 
-  GET_AGENTS: ++i,
+  GET_AGENT_VIEWS: 'GET_AGENT_VIEWS',
   /*
-      >>>
-      agents: [...]
+      params: { agentId: string };
   */
 
-  GET_AGENT: ++i,
-  /*
-      <<<
-      agentId
+  GET_SIGNALING_VIEWS: 'GET_SIGNALING_VIEWS',
 
-      >>>
-      agents: [...]
+  GET_AGENT_USED_TAGS: 'GET_AGENT_USED_TAGS',
+  /*
+      params: { agentId: string };
   */
 
-  GET_COMPANY_AGENTS: ++i,
-  /*
-      <<<
-      companyId
-
-      >>>
-      agents: [...]
-  */
-
-  GET_AGENT_VIEWS: ++i,
-  /*
-      <<<
-      agentId
-
-      >>>
-      views: [...]
-  */
-
-  GET_SIGNALLING_VIEWS: ++i,
-  /*
-      >>>
-      views: [...]
-  */
-
-  GET_AGENT_TAGS: ++i,
-  /*
-      <<<
-      agentId
-
-      >>>
-      tags: [...]
-  */
-
-  GET_AGENT_SIGNALS_TAGS: ++i,
-  /*
-      <<<
-      agentId
-
-      >>>
-      tags: [...]
-  */
-
-  GET_AGENT_USED_TAGS: ++i,
-  /*
-      <<<
-      agentId
-
-      >>>
-      tags: [...]
-  */
-
-  GET_BATCH_REQUEST_PARAMS_FOR_AGENT: ++i,
-  /*
-      <<<
-      agentId
-
-      >>>
-      tags: {
-        dataSourceId
-      }
-  */
+  GET_SIGNALS_USED_TAGS: 'GET_SIGNALS_USED_TAGS',
 };
